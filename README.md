@@ -2,6 +2,8 @@
 
 Turns an architect's multi-page PDF into clean vector floor and apartment plans by reading the PDF's own OCG layers.
 
+History: this is a public snapshot of a private repository (48 commits, 2 to 27 Sep 2026). Client details are replaced.
+
 It is for teams that sell or present apartments and get the drawings as a CAD export, not as clean plans. It extracts walls, openings and core by layer, takes unit and balcony polygons from the architect's area layer, checks them against the official area schedule, and hands the drawing to Figma for a manual pass whose edits come back as a diff by object id.
 
 ![Synthetic sample: the PDF page with all layers, and the SVG built from the 4 kept layers](docs/img/pdf-vs-layers.webp)
