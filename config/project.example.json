@@ -1,0 +1,16 @@
+{
+  "_comment": "Copy to config/project.json (git-ignored) and point it at your own PDF. Relative paths resolve against the repository root.",
+  "pdf": "input/architect.pdf",
+  "workspace": "work",
+  "style": "config/style.json",
+  "layers": "config/layers.example.json",
+  "schedule": "work/site-assets/data/units.json",
+  "cm_per_pt": 7.05,
+  "pages": {
+    "first": 82,
+    "last": 106,
+    "first_floor": 2
+  },
+  "font": null,
+  "project_name": "My project"
+}

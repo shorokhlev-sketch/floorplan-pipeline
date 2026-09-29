@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.DS_Store
+sample/work/
+work/
+input/
+config/project.json

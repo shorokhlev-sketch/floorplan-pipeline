@@ -1,0 +1,19 @@
+{
+  "_comment": "OCG layer rules for the synthetic sample PDF (English layer names). Same schema as layers.example.json.",
+  "keep": [
+    {"layer": "A-WALL", "role": "walls (grey fills); orange strokes are doors", "take": "fills", "also_stroke_colors": ["#FF6600"]},
+    {"layer": "A-COLS", "role": "columns: white fill plus a red hatch cross", "take": "all", "exclude_stroke_colors": ["#A80F02"], "drop_strokes": true, "white_fill_to_ink": true},
+    {"layer": "A-GLAZ", "role": "windows: white bricks and blue mullions", "take": "all"},
+    {"layer": "A-CORE", "role": "stairs and lift", "take": "all"}
+  ],
+  "units": {
+    "layer": "A-AREA",
+    "unit_color": [153, 153, 153],
+    "balcony_color": [0, 0, 0],
+    "min_unit_m2": 8.0,
+    "min_balcony_m2": 1.0,
+    "office_floors": []
+  },
+  "columns_layer": "A-COLS",
+  "tick_px": 3.0
+}

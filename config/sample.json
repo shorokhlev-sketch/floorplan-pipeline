@@ -1,0 +1,16 @@
+{
+  "_comment": "Synthetic sample: sample/make_sample_pdf.py writes the PDF and the area schedule into sample/work.",
+  "pdf": "sample/work/sample.pdf",
+  "workspace": "sample/work",
+  "style": "config/style.json",
+  "layers": "config/layers.sample.json",
+  "schedule": "sample/work/site-assets/data/units.json",
+  "cm_per_pt": 7.05,
+  "pages": {
+    "first": 1,
+    "last": 2,
+    "first_floor": 2
+  },
+  "font": null,
+  "project_name": "Sample tower"
+}

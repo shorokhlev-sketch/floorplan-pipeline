@@ -1,0 +1,29 @@
+{
+  "_comment": "OCG layer rules from a real ArchiCAD export (Georgian layer names, English roles). plan-pdf-layers.py keeps only these layers, in this order (bottom to top). take: all | fills | strokes. fill_colors: keep only fills of these colors. also_stroke_colors: with take=fills, also keep stroke-only objects of these colors. exclude_stroke_colors: drop objects stroked with these colors (hatching). drop_strokes: in ink mode, stroke chains become a black fill when they close from axis-parallel segments, black lines when open, and are dropped when diagonal (hatch, column crosses) or shorter than tick_px. white_fill_to_ink: white fills become black (columns).",
+  "keep": [
+    {"layer": "Structural - Bearing", "role": "bearing walls; orange strokes are door arcs and leaves", "take": "fills", "also_stroke_colors": ["#FF6600"]},
+    {"layer": "დიაფრაგმა", "role": "shear walls", "take": "fills"},
+    {"layer": "კედლები", "role": "partitions", "take": "all", "drop_strokes": true},
+    {"layer": "კოლონები", "role": "columns", "take": "all", "exclude_stroke_colors": ["#A80F02"], "drop_strokes": true, "white_fill_to_ink": true},
+    {"layer": "ვიტრაჟები", "role": "curtain walls: mullions, glass, sashes", "take": "all"},
+    {"layer": "დადგენილება #41", "role": "black window wedges only; orange here is evacuation arrows", "take": "fills", "fill_colors": ["#000000"]},
+    {"layer": "ალუკაბონდის პანელები", "role": "composite panels between mullions and walls", "take": "all", "drop_strokes": true},
+    {"layer": "ფასადის პანელები ფერადი", "role": "facade panels", "take": "all", "drop_strokes": true},
+    {"layer": "გადახურვის ფილა", "role": "slab outline", "take": "all"},
+    {"layer": "კიბე", "role": "stairs", "take": "all"},
+    {"layer": "ლიფტი", "role": "lifts without hatch", "take": "all", "exclude_stroke_colors": ["#888786", "#FFCC99"]},
+    {"layer": "შახტა", "role": "shafts", "take": "all"},
+    {"layer": "კიბის მოაჯირის ფილი", "role": "stair railings", "take": "all"}
+  ],
+  "units": {
+    "_comment": "Layer where the architect outlined measured apartment and balcony areas with single line segments.",
+    "layer": "ბინების კვადრატულობა",
+    "unit_color": [153, 153, 153],
+    "balcony_color": [0, 0, 0],
+    "min_unit_m2": 8.0,
+    "min_balcony_m2": 1.0,
+    "office_floors": [2]
+  },
+  "columns_layer": "კოლონები",
+  "tick_px": 3.0
+}
