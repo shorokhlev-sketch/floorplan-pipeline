@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Studio — стилизация планов этажей</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="studio.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <aside class="panel" id="panel">
+    <div class="panel-header">
+      <h1>Plan Studio</h1>
+      <p class="hint">Настрой один раз — применится ко всем этажам; потом <code>tools/render-plans.py</code> соберёт все планы и планировки.</p>
+
+      <div class="floor-row">
+        <span class="field-label">Этаж</span>
+        <button id="floor-prev" class="btn-icon" title="Предыдущий этаж (←)">←</button>
+        <select id="floor-select"></select>
+        <button id="floor-next" class="btn-icon" title="Следующий этаж (→)">→</button>
+      </div>
+
+      <div class="presets-row">
+        <button class="btn-preset" data-preset="pdf">Как в PDF</button>
+        <button class="btn-preset" data-preset="clean">Чистый чертёж</button>
+        <button class="btn-preset" data-preset="ours">Наш стиль</button>
+      </div>
+
+      <div class="bg-row">
+        <label for="bg-color">Бумага</label>
+        <input type="color" id="bg-color" value="#F4F1EA">
+      </div>
+
+      <div class="status-line" id="status-line"></div>
+    </div>
+
+    <div class="panel-scroll">
+
+      <section class="panel-section" id="units-section">
+        <h2>Квартиры</h2>
+        <label class="row-check"><input type="checkbox" id="chk-unit-polys" checked> Полигоны квартир</label>
+        <div class="type-colors" id="type-colors"></div>
+        <label class="row-check"><input type="checkbox" id="chk-unit-labels" checked> Подписи квартир</label>
+        <div class="sub-row">
+          <label for="unit-label-color">Цвет подписи</label>
+          <input type="color" id="unit-label-color" value="#1E1B17">
+        </div>
+        <label class="row-check"><input type="checkbox" id="chk-orig-texts"> Оригинальные тексты PDF</label>
+      </section>
+
+      <section class="panel-section" id="clusters-section">
+        <h2>Слои (кластеры)</h2>
+        <div class="cluster-list-head">
+          <span>слой</span><span>роль</span><span>стиль</span>
+        </div>
+        <div id="cluster-list" class="cluster-list"></div>
+      </section>
+
+      <section class="panel-section" id="export-section">
+        <h2>Экспорт</h2>
+        <button id="btn-export-style" class="btn-full">Скачать style.json</button>
+        <label class="btn-full btn-file">
+          Загрузить style.json
+          <input type="file" id="input-load-style" accept="application/json" hidden>
+        </label>
+        <button id="btn-export-svg" class="btn-full">Скачать SVG этажа</button>
+      </section>
+
+    </div>
+  </aside>
+
+  <main class="stage-wrap">
+    <div class="stage" id="stage">
+      <div class="stage-inner" id="stage-inner"></div>
+      <div class="empty-msg" id="empty-msg" hidden></div>
+    </div>
+    <div class="stage-toolbar">
+      <button id="btn-fit" class="btn-toolbar">Вписать</button>
+      <span class="zoom-readout" id="zoom-readout">100%</span>
+      <span class="spacer"></span>
+      <span class="status-msg" id="status-msg"></span>
+    </div>
+  </main>
+
+  <div class="fatal-overlay" id="fatal-overlay" hidden>
+    <div class="fatal-box">
+      <h2>Данные ещё не готовы</h2>
+      <p id="fatal-text"></p>
+    </div>
+  </div>
+
+</div>
+<script src="studio.js"></script>
+</body>
+</html>

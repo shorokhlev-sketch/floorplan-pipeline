@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan editor v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="editor.css?v=202609222300">
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <div class="panel-header">
+      <div class="brand">Plan editor · v3</div>
+      <div class="sub" id="hdr-sub">документ → вектор → редактор</div>
+    </div>
+    <div class="panel-body">
+
+      <section>
+        <h2>Квартиры</h2>
+        <div class="units" id="units"></div>
+      </section>
+
+      <section>
+        <h2>Инструменты</h2>
+        <div class="tools" id="tools">
+          <button data-tool="select" title="Выделение и перенос"><span>Выбор</span><kbd>V</kbd></button>
+          <button data-tool="wall" title="Рисовать цепочку стен"><span>Стена</span><kbd>W</kbd></button>
+          <button data-tool="split" title="Разрезать стену в точке"><span>Разрез</span><kbd>S</kbd></button>
+          <button data-tool="door" title="Дверь на стене"><span>Дверь</span><kbd>D</kbd></button>
+          <button data-tool="window" title="Окно на стене"><span>Окно</span><kbd>O</kbd></button>
+          <button data-tool="cut" title="Разрезать область линией (два клика)"><span>Комната</span><kbd>A</kbd></button>
+          <button data-tool="pen" title="Карандаш — замечание"><span>Карандаш</span><kbd>N</kbd></button>
+          <button data-tool="text" title="Подпись — замечание"><span>Подпись</span><kbd>T</kbd></button>
+          <button data-tool="hand" title="Рука"><span>Рука</span><kbd>H</kbd></button>
+        </div>
+        <div class="hint" id="tool-hint"></div>
+        <div class="row">
+          <button id="btn-undo" title="⌘Z">Отменить</button>
+          <button id="btn-redo" title="⌘⇧Z">Вернуть</button>
+        </div>
+        <div class="preset">
+          <label>Новая стена: t <input type="number" id="preset-t" step="0.1" min="0.3" value="1.4"> pt</label>
+          <select id="preset-kind">
+            <option value="partition">перегородка</option>
+            <option value="exterior">наружная</option>
+            <option value="corridor">к коридору</option>
+            <option value="party">к соседу</option>
+            <option value="balcony">балкон</option>
+            <option value="railing">ограждение</option>
+          </select>
+        </div>
+      </section>
+
+      <section>
+        <h2>Свойства</h2>
+        <div id="props" class="props"><div class="faint">Ничего не выбрано</div></div>
+      </section>
+
+      <section>
+        <h2>Площади</h2>
+        <div id="areas"></div>
+      </section>
+
+      <section>
+        <h2>Слои</h2>
+        <label class="chk"><input type="checkbox" id="ly-pdf" checked> PDF архитектора <kbd>P</kbd></label>
+        <input type="range" id="ly-pdf-op" min="0" max="1" step="0.05" value="0.45">
+        <label class="chk"><input type="checkbox" id="ly-raw"> Сырой CAD (серым, цели привязки) <kbd>C</kbd></label>
+        <label class="chk"><input type="checkbox" id="ly-furn" checked> Мебель</label>
+        <label class="chk"><input type="checkbox" id="ly-labels"> Подписи площадей на холсте</label>
+        <label class="chk"><input type="checkbox" id="ly-notes" checked> Замечания</label>
+        <label class="chk"><input type="checkbox" id="ly-nodes" checked> Узлы стен</label>
+        <div class="faint">Tab — только PDF / только план</div>
+      </section>
+
+      <section>
+        <h2>Мебель</h2>
+        <div class="palette" id="palette"></div>
+      </section>
+
+      <section>
+        <h2>Данные</h2>
+        <button id="btn-save" class="primary">Сохранить на сервер <kbd>⌘S</kbd></button>
+        <div class="row">
+          <button id="btn-json">Скачать JSON</button>
+          <button id="btn-svg">Скачать SVG</button>
+          <button id="btn-png">Скачать PNG</button>
+        </div>
+        <div class="row">
+          <button id="btn-notes-copy">Копировать PNG замечаний</button>
+          <button id="btn-notes-clear">Стереть замечания</button>
+        </div>
+        <div id="draft-box" class="hidden">
+          <div class="faint" id="draft-info"></div>
+          <div class="row"><button id="btn-draft-restore">Восстановить черновик</button><button id="btn-draft-drop">Удалить</button></div>
+        </div>
+        <div class="row"><button id="btn-reload">Перечитать с сервера</button></div>
+      </section>
+
+    </div>
+  </aside>
+
+  <main class="stage-col">
+    <div class="top-bar">
+      <div id="title">—</div>
+      <div class="spacer"></div>
+      <button id="btn-fit">По размеру</button>
+      <div id="zoom" class="faint">100%</div>
+    </div>
+    <div class="stage" id="stage">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g id="g-plan"></g>
+        <g id="g-raw" class="raw"></g>
+        <image id="pdf" preserveAspectRatio="none" style="pointer-events:none"></image>
+        <g id="g-overlay"></g>
+      </svg>
+      <input id="text-input" class="hidden" type="text" placeholder="замечание…" autocomplete="off">
+    </div>
+    <div class="bottom-bar">
+      <span id="status">—</span>
+      <span class="spacer"></span>
+      <span id="coords" class="faint"></span>
+    </div>
+  </main>
+</div>
+<script type="module" src="editor.js?v=202609222300"></script>
+</body>
+</html>

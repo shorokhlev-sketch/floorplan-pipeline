@@ -1,0 +1,14 @@
+{
+ "v": 3,
+ "units": [
+  {
+   "unit": "901",
+   "floor": 9,
+   "type": "1br",
+   "title": "1-комн.",
+   "total": 34.2,
+   "balcony": 2.9,
+   "file": "unit-901.json"
+  }
+ ]
+}

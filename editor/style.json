@@ -1,0 +1,40 @@
+{
+  "paper": "#FFFFFF",
+  "floor": "#F3EFE8",
+  "ink": "#182E46",
+  "muted": "#9AA3AD",
+  "w_furniture": 0.5,
+  "w_leaf": 0.5,
+  "w_arc": 0.4,
+  "arc_dash": "1.5 1.5",
+  "w_column": 0.9,
+  "window": {
+    "lines": [
+      0.3333,
+      0.6667
+    ],
+    "w": 0.5
+  },
+  "sliding": {
+    "w": 0.5,
+    "overlap": 1.0
+  },
+  "margin": 14,
+  "label": {
+    "font": "Instrument Serif, Georgia, serif",
+    "size": 6.5,
+    "color": "#182E46",
+    "unit": " m²"
+  },
+  "title": {
+    "font": "Instrument Serif, Georgia, serif",
+    "size_name": 10,
+    "size_area": 10,
+    "color": "#182E46"
+  },
+  "note": {
+    "color": "#E0342B",
+    "w": 0.9,
+    "size": 4.2
+  }
+}

@@ -1,0 +1,372 @@
+{
+ "v": 3,
+ "unit": "901",
+ "floor": 9,
+ "type": "1br",
+ "title": "1-комн.",
+ "total": 34.2,
+ "living": 31.3,
+ "balcony": 2.9,
+ "bbox": {
+  "x0": 0,
+  "y0": 0,
+  "w": 130,
+  "h": 110
+ },
+ "nodes": {
+  "n1": [
+   20,
+   20
+  ],
+  "n2": [
+   110,
+   20
+  ],
+  "n3": [
+   110,
+   90
+  ],
+  "n4": [
+   20,
+   90
+  ],
+  "n5": [
+   80,
+   20
+  ],
+  "n6": [
+   80,
+   50
+  ],
+  "n7": [
+   110,
+   50
+  ],
+  "n8": [
+   30,
+   4
+  ],
+  "n9": [
+   75,
+   4
+  ],
+  "n10": [
+   30,
+   16.8
+  ],
+  "n11": [
+   75,
+   16.8
+  ]
+ },
+ "walls": [
+  {
+   "id": "w1",
+   "a": "n1",
+   "b": "n2",
+   "t": 3.2,
+   "side": -1,
+   "kind": "exterior"
+  },
+  {
+   "id": "w2",
+   "a": "n2",
+   "b": "n3",
+   "t": 3.2,
+   "side": -1,
+   "kind": "exterior"
+  },
+  {
+   "id": "w3",
+   "a": "n3",
+   "b": "n4",
+   "t": 2.4,
+   "side": -1,
+   "kind": "corridor"
+  },
+  {
+   "id": "w4",
+   "a": "n4",
+   "b": "n1",
+   "t": 3.2,
+   "side": -1,
+   "kind": "exterior"
+  },
+  {
+   "id": "w5",
+   "a": "n5",
+   "b": "n6",
+   "t": 1.2,
+   "side": 1,
+   "kind": "partition"
+  },
+  {
+   "id": "w6",
+   "a": "n6",
+   "b": "n7",
+   "t": 1.2,
+   "side": 1,
+   "kind": "partition"
+  },
+  {
+   "id": "w7",
+   "a": "n8",
+   "b": "n9",
+   "t": 0.8,
+   "side": 1,
+   "kind": "railing"
+  },
+  {
+   "id": "w8",
+   "a": "n10",
+   "b": "n8",
+   "t": 0.8,
+   "side": 1,
+   "kind": "railing"
+  },
+  {
+   "id": "w9",
+   "a": "n9",
+   "b": "n11",
+   "t": 0.8,
+   "side": -1,
+   "kind": "railing"
+  }
+ ],
+ "openings": [
+  {
+   "id": "o1",
+   "wall": "w1",
+   "pos": 14,
+   "width": 28,
+   "kind": "sliding"
+  },
+  {
+   "id": "o2",
+   "wall": "w3",
+   "pos": 8,
+   "width": 9,
+   "kind": "door",
+   "hinge": "a",
+   "swing": -1
+  },
+  {
+   "id": "o3",
+   "wall": "w5",
+   "pos": 18,
+   "width": 8,
+   "kind": "door",
+   "hinge": "b",
+   "swing": -1
+  },
+  {
+   "id": "o4",
+   "wall": "w4",
+   "pos": 20,
+   "width": 26,
+   "kind": "window"
+  },
+  {
+   "id": "o5",
+   "wall": "w2",
+   "pos": 42,
+   "width": 20,
+   "kind": "window"
+  }
+ ],
+ "areas": [
+  {
+   "id": "r1",
+   "kind": "room",
+   "name": "",
+   "poly": [
+    [
+     20,
+     20
+    ],
+    [
+     80,
+     20
+    ],
+    [
+     80,
+     50
+    ],
+    [
+     110,
+     50
+    ],
+    [
+     110,
+     90
+    ],
+    [
+     20,
+     90
+    ]
+   ],
+   "label": {
+    "text": "26,8",
+    "x": 23,
+    "y": 46
+   }
+  },
+  {
+   "id": "r2",
+   "kind": "room",
+   "name": "",
+   "poly": [
+    [
+     80,
+     20
+    ],
+    [
+     110,
+     20
+    ],
+    [
+     110,
+     50
+    ],
+    [
+     80,
+     50
+    ]
+   ],
+   "label": {
+    "text": "4,5",
+    "x": 89,
+    "y": 44
+   }
+  },
+  {
+   "id": "r3",
+   "kind": "balcony",
+   "poly": [
+    [
+     30,
+     4
+    ],
+    [
+     75,
+     4
+    ],
+    [
+     75,
+     16.8
+    ],
+    [
+     30,
+     16.8
+    ]
+   ],
+   "label": {
+    "text": "2,9",
+    "x": 46,
+    "y": 12
+   }
+  }
+ ],
+ "columns": [],
+ "blocks": [
+  {
+   "id": "b1",
+   "sym": "bed_double",
+   "x": 40,
+   "y": 56,
+   "w": 22,
+   "h": 32,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b2",
+   "sym": "nightstand",
+   "x": 34,
+   "y": 57,
+   "w": 5,
+   "h": 9,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b3",
+   "sym": "kitchen_row",
+   "x": 22,
+   "y": 22,
+   "w": 30,
+   "h": 6,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b4",
+   "sym": "wardrobe",
+   "x": 56,
+   "y": 22,
+   "w": 20,
+   "h": 6,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b5",
+   "sym": "sofa",
+   "x": 84,
+   "y": 52,
+   "w": 24,
+   "h": 9,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b6",
+   "sym": "toilet",
+   "x": 102,
+   "y": 23,
+   "w": 6,
+   "h": 9,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b7",
+   "sym": "shower",
+   "x": 82,
+   "y": 22,
+   "w": 9,
+   "h": 9,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b8",
+   "sym": "sink",
+   "x": 91.5,
+   "y": 23,
+   "w": 8,
+   "h": 5,
+   "rot": 0,
+   "mirror": false
+  },
+  {
+   "id": "b9",
+   "sym": "table_round",
+   "x": 88,
+   "y": 64,
+   "w": 14,
+   "h": 14,
+   "rot": 0,
+   "mirror": false
+  }
+ ],
+ "notes": [
+  {
+   "id": "k1",
+   "kind": "text",
+   "x": 88,
+   "y": 100,
+   "text": "demo note"
+  }
+ ]
+}

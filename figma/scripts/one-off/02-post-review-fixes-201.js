@@ -1,0 +1,46 @@
+// Final 201 on the reviewer's version: convert LINE/RECT to vectors, delete stray sticks, fix door brackets, rebuild balcony glazing band to walls with a door opening, expand floor under walls, join wall gaps, strip glazing lines from wall windows; screenshots
+const ROOM = __ROOM__; // floor outline of the unit, frame px
+const BAL = __BAL__;   // balcony outline, frame px
+const INK = { r: 0x18/255, g: 0x2E/255, b: 0x46/255 }, WHITE = { r: 1, g: 1, b: 1 };
+const hex = (c) => '#' + [c.r, c.g, c.b].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+function inside(pt, poly) { let ins = false; for (let i = 0, n = poly.length; i < n; i++) { const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % n]; if ((y1 > pt[1]) !== (y2 > pt[1]) && pt[0] < (x2 - x1) * (pt[1] - y1) / (y2 - y1) + x1) ins = !ins; } return ins; }
+function distPoly(pt, poly) { let best = 1e9; for (let i = 0, n = poly.length; i < n; i++) { const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % n]; const dx = x2 - x1, dy = y2 - y1, L = dx * dx + dy * dy; const t = L === 0 ? 0 : Math.max(0, Math.min(1, ((pt[0] - x1) * dx + (pt[1] - y1) * dy) / L)); best = Math.min(best, Math.hypot(pt[0] - (x1 + t * dx), pt[1] - (y1 + t * dy))); } return best; }
+const sdR = (p) => (inside(p, ROOM) ? -1 : 1) * distPoly(p, ROOM); const inBal = (p) => inside(p, BAL);
+const bboxOf = (n) => [n.x, n.y, n.x + n.width, n.y + n.height]; const within = (b, B, e) => b[0] >= B[0] - e && b[1] >= B[1] - e && b[2] <= B[2] + e && b[3] <= B[3] + e;
+const fr = figma.currentPage.children.find(c => c.type === 'FRAME' && c.name.startsWith('201 · ') && c.name.includes('final') && !c.name.includes('baseline'));
+const g = fr.children.find(c => c.name === 'Чертёж'); const log = {};
+const mkVec = (data, x, y, stroke, w, fill, name) => { const v = figma.createVector(); g.appendChild(v); v.vectorPaths = [{ windingRule: 'NONZERO', data }]; v.x = x; v.y = y; v.strokes = stroke ? [{ type: 'SOLID', color: stroke }] : []; if (stroke) { v.strokeWeight = w; v.strokeCap = 'NONE'; } v.fills = fill ? [{ type: 'SOLID', color: fill }] : []; v.name = name; return v; };
+// a) LINE/RECTANGLE -> VECTOR
+let conv = 0; for (const n of [...g.children]) { if (n.type === 'LINE') { const L = n.width; const a = -n.rotation * Math.PI / 180; const x2 = n.x + L * Math.cos(a), y2 = n.y + L * Math.sin(a); const x0 = Math.min(n.x, x2), y0 = Math.min(n.y, y2); const v = mkVec(`M ${(n.x - x0).toFixed(2)} ${(n.y - y0).toFixed(2)} L ${(x2 - x0).toFixed(2)} ${(y2 - y0).toFixed(2)}`, x0, y0, n.strokes[0].color, n.strokeWeight, null, n.name); n.remove(); conv++; } else if (n.type === 'RECTANGLE') { const v = mkVec(`M 0 0 L ${n.width} 0 L ${n.width} ${n.height} L 0 ${n.height} Z`, n.x, n.y, null, 0, n.fills.length ? n.fills[0].color : null, n.name); n.remove(); conv++; } } log.converted = conv;
+const walls = () => g.children.filter(n => n.name === 'стена' && n.fills.length).map(n => ({ n, b: bboxOf(n) }));
+const whitesB = () => g.children.filter(n => n.fills.length && n.fills[0].type === 'SOLID' && hex(n.fills[0].color) === '#FFFFFF' && Math.max(n.width, n.height) > 12).map(n => bboxOf(n));
+// b) stray sticks
+let sticks = 0; { const WB = whitesB(); for (const n of [...g.children]) { if (n.fills.length || n.name === 'дуга двери') continue; const mx = n.x + n.width / 2, my = n.y + n.height / 2; const L = Math.max(n.width, n.height); const s = sdR([mx, my]); const inWhite = WB.some(b => mx >= b[0] && mx <= b[2] && my >= b[1] && my <= b[3]);
+    if ((L <= 6 && s > -12 && !inWhite && !inBal([mx, my])) || (s > 12 && !inBal([mx, my]) && distPoly([mx, my], BAL) > 12)) { n.remove(); sticks++; } } } log.sticks = sticks;
+// c) door brackets at the top wall: remap y 73→79.3, 83→88
+let br = 0; for (const n of g.children) { if (n.fills.length) continue; const inX = (n.x >= 317 && n.x + n.width <= 327) || (n.x >= 416 && n.x + n.width <= 424); if (!inX || n.y < 72 || n.y + n.height > 84.5) continue; const isV = n.height > n.width; if (isV) { n.resize(Math.max(n.width, 0.01), 8.7); n.y = 79.3; } else { n.y = Math.abs(n.y - 73) < 1 ? 79.3 : 88; } br++; } log.brackets = br;
+// d) balcony glazing band from existing window bars on the room/balcony edge
+{ const bars = g.children.filter(n => n.name === 'окно' && n.y > 880 && n.y < 905); let y0 = Math.min(...bars.map(n => n.y)), y1 = Math.max(...bars.map(n => n.y + n.height)); if (!isFinite(y0)) { y0 = 887.4; y1 = 902.4; }
+  const W = walls(); const cy = (y0 + y1) / 2; const wallAt = (x) => W.some(w => w.n.height > 60 && x >= w.b[0] && x <= w.b[2] && cy >= w.b[1] && cy <= w.b[3]);
+  let x0 = Math.min(...bars.map(n => n.x)), x1 = Math.max(...bars.map(n => n.x + n.width)); for (let k = 0; k < 120 && !wallAt(x0 - 1); k++) x0 -= 1; for (let k = 0; k < 120 && !wallAt(x1 + 1); k++) x1 += 1;
+  let removed = 0; for (const n of [...g.children]) { const b = bboxOf(n); if (!within(b, [x0 - 0.5, y0 - 2, x1 + 0.5, y1 + 2], 0)) continue; if (n.name === 'стена' && n.height > 60) continue; n.remove(); removed++; }
+  // door opening: vertical leaf ending at the band
+  let open = null; for (const n of g.children) { if (n.name !== 'окно/полотно' || n.width > 1 || n.height < 40) continue; if (Math.abs((n.y + n.height) - y0) < 3 || Math.abs(n.y - y1) < 3) { const arc = g.children.find(a => a.name === 'дуга двери' && Math.abs(a.width - n.height) < 6 && Math.abs(a.y - n.y) < 6); const w = arc ? arc.width : n.height; open = arc && arc.x + arc.width / 2 < n.x ? [n.x - w, n.x] : [n.x, n.x + w]; break; } }
+  mkVec(`M 0 0 L ${(x1 - x0).toFixed(2)} 0 L ${(x1 - x0).toFixed(2)} ${(y1 - y0).toFixed(2)} L 0 ${(y1 - y0).toFixed(2)} Z`, x0, y0, null, 0, WHITE, 'остекление балкона');
+  const segs = open ? [[x0, Math.max(x0, open[0])], [Math.min(x1, open[1]), x1]] : [[x0, x1]];
+  for (const f of [1 / 3, 2 / 3]) for (const [a, b] of segs) if (b - a > 2) mkVec(`M 0 0 L ${(b - a).toFixed(2)} 0`, a, y0 + (y1 - y0) * f, INK, 1.5, null, 'остекление');
+  log.band = { y0, y1, x0, x1, removed, open }; }
+// e) floor: offset ROOM outward by 9
+{ const n = ROOM.length; const off = 9; const E = []; for (let i = 0; i < n; i++) { const A = ROOM[i], B = ROOM[(i + 1) % n]; const dx = B[0] - A[0], dy = B[1] - A[1]; const L = Math.hypot(dx, dy) || 1; let nx = -dy / L, ny = dx / L; const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2]; if (inside([mid[0] + nx * 2, mid[1] + ny * 2], ROOM)) { nx = -nx; ny = -ny; } E.push({ A: [A[0] + nx * off, A[1] + ny * off], B: [B[0] + nx * off, B[1] + ny * off] }); }
+  const P = []; for (let i = 0; i < n; i++) { const e1 = E[(i - 1 + n) % n], e2 = E[i]; const [x1, y1] = e1.A, [x2, y2] = e1.B, [x3, y3] = e2.A, [x4, y4] = e2.B; const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4); if (Math.abs(den) < 1e-6) { P.push(e2.A); continue; } const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den; P.push([x1 + t * (x2 - x1), y1 + t * (y2 - y1)]); }
+  const floor = fr.children.find(c => c.name === 'Пол'); const mx = Math.min(...P.map(p => p[0])), my = Math.min(...P.map(p => p[1])); floor.vectorPaths = [{ windingRule: 'EVENODD', data: 'M ' + P.map(p => `${(p[0] - mx).toFixed(1)} ${(p[1] - my).toFixed(1)}`).join(' L ') + ' Z' }]; floor.x = mx; floor.y = my; log.floor = [Math.round(mx), Math.round(my), Math.round(floor.width), Math.round(floor.height)]; }
+// f) join wall gaps (extend wall ends up to 30 px until they hit another wall)
+{ const W = walls(); let ext = 0; for (const w of W) { const vert = w.n.height > w.n.width; const others = W.filter(o => o !== w); const hitAt = (px, py) => others.some(o => px >= o.b[0] - 0.2 && px <= o.b[2] + 0.2 && py >= o.b[1] - 0.2 && py <= o.b[3] + 0.2);
+    const cx = (w.b[0] + w.b[2]) / 2, cy = (w.b[1] + w.b[3]) / 2;
+    for (const end of [-1, 1]) { let d = 0; for (let k = 1; k <= 30; k++) { const px = vert ? cx : (end < 0 ? w.b[0] - k : w.b[2] + k), py = vert ? (end < 0 ? w.b[1] - k : w.b[3] + k) : cy; if (hitAt(px, py)) { d = k; break; } }
+      if (d > 0.5) { if (vert) { if (end < 0) { w.n.resize(w.n.width, w.n.height + d); w.n.y -= d; } else w.n.resize(w.n.width, w.n.height + d); } else { if (end < 0) { w.n.resize(w.n.width + d, w.n.height); w.n.x -= d; } else w.n.resize(w.n.width + d, w.n.height); } w.b = bboxOf(w.n); ext++; } } } log.wallExt = ext; }
+// g) windows in walls: no glazing lines; white fill
+{ let del = 0; const niches = g.children.filter(n => n.name === 'окно' && !(n.y > 880 && n.y < 905)); for (const nn of niches) { nn.fills = [{ type: 'SOLID', color: WHITE }]; nn.strokes = []; const b = bboxOf(nn); for (const l of [...g.children]) if (l.name === 'остекление' && within(bboxOf(l), b, 1)) { l.remove(); del++; } } log.nicheLinesRemoved = del; }
+const shots = []; for (const [x, y, w, h] of [[90, 870, 430, 50], [280, 60, 190, 130]]) { const t = figma.createFrame(); fr.appendChild(t); t.name = 'tmp'; t.fills = []; t.resize(w, h); t.x = x; t.y = y; t.clipsContent = true; shots.push(await t.screenshot({ scale: 2, contentsOnly: false })); t.remove(); }
+shots.push(await fr.screenshot({ scale: 0.6 }));
+return { log, shots };
